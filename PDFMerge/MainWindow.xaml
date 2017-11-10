@@ -1,0 +1,28 @@
+﻿<Window x:Class="PDFMerge.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PDF Mail Merge" Height="135.016" Width="443" Loaded="Window_Loaded" AllowDrop="False" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Content="Excel sheet:" HorizontalAlignment="Right" Name="lbl_Excel" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Name="txt_Excel" VerticalAlignment="Stretch" Drop="txt_Excel_Drop" PreviewDragOver="txt_Excel_PreviewDragOver" />
+        <Button Grid.Row="0" Grid.Column="2" Content="Select"  HorizontalAlignment="Stretch" Name="btn_Excel" VerticalAlignment="Stretch" Click="btn_Excel_Click" />
+        <Label Grid.Row="1" Grid.Column="0" Content="PDF form:" HorizontalAlignment="Right" Name="lbl_PDF" VerticalAlignment="Top" />
+        <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Name="txt_PDF" VerticalAlignment="Stretch" PreviewDragOver="txt_PDF_PreviewDragOver" Drop="txt_PDF_Drop" />
+        <Button Grid.Row="1" Grid.Column="2" Content="Select" HorizontalAlignment="Stretch" Name="btn_PDF" VerticalAlignment="Stretch" Click="btn_PDF_Click" />
+        <Label Grid.Row="2" Grid.Column="0" Content="Output folder:" HorizontalAlignment="Right" Name="lbl_Output" VerticalAlignment="Bottom" />
+        <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Name="txt_Output" VerticalAlignment="Stretch" PreviewDragOver="txt_Output_PreviewDragOver" Drop="txt_Output_Drop" />
+        <Button Grid.Row="2" Grid.Column="2" Content="Select" HorizontalAlignment="Stretch" Name="btn_Output" VerticalAlignment="Stretch" Click="btn_Output_Click" />
+        <Button Grid.Row="3" Grid.ColumnSpan="3" Content="Run" HorizontalAlignment="Stretch" Name="btn_Run" VerticalAlignment="Stretch" Click="btn_Run_Click" />
+    </Grid>
+</Window>
