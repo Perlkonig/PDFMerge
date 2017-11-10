@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Windows;
 using swf = System.Windows.Forms;
@@ -125,15 +126,7 @@ namespace PDFMerge
         private List<string> GetFieldNames()
         {
             List<string> flist = new List<string>();
-            string pdfTemplate = txt_PDF.Text;
-
-            // create a new PDF reader based on the PDF template document
-            PdfReader pdfReader = new PdfReader(pdfTemplate);
-
-            // create and populate a string builder with each of the
-            // field names available in the subject PDF
-            StringBuilder sb = new StringBuilder();
-            sb.Append("Found the following fields:" + Environment.NewLine);
+            PdfReader pdfReader = new PdfReader(txt_PDF.Text);
 
             var fields = pdfReader.AcroFields.Fields;
             foreach (var key in fields.Keys)
@@ -145,44 +138,64 @@ namespace PDFMerge
 
         private List<Dictionary<string,string>> LoadExcel()
         {
-            OleDbConnection con = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + txt_Excel.Text + ";Extended Properties=\"Excel 12.0;IMEX=1;HDR=NO\"");
-            con.Open();
-
-            string sheetName = "Sheet1$"; // (string)dt.Rows[0]["Table_Name"];
-
-            DataTable xlWorksheet = new DataTable();
-
-            xlWorksheet.Load(new OleDbCommand("Select * From ["+ sheetName +"]", con).ExecuteReader());
+            Excel.Application app = new Excel.Application();
+            Excel.Workbook wb = app.Workbooks.Open(txt_Excel.Text);
+            Excel.Worksheet ws = wb.Worksheets["Sheet1"];
+            Excel.Range usedRange = ws.UsedRange;
             List<Dictionary<string, string>> l = new List<Dictionary<string, string>>();
 
-            for (int nRow = 1; nRow < xlWorksheet.Rows.Count; nRow++)
+            //Iterate the rows in the used range
+            Excel.Range firstrow = null;
+            foreach (Excel.Range row in usedRange.Rows)
             {
-                Dictionary<string, string> d = new Dictionary<string, string>();
-
-                for (int nColumn = 0; nColumn < xlWorksheet.Columns.Count; nColumn++)
+                if (firstrow == null)
                 {
-                    d.Add(xlWorksheet.Rows[0].ItemArray[nColumn].ToString(), xlWorksheet.Rows[nRow].ItemArray[nColumn].ToString());
+                    firstrow = row;
+                } else
+                {
+                    Dictionary<string, string> d = new Dictionary<string, string>();
+                    for (int i = 0; i < row.Columns.Count; i++)
+                        d.Add(firstrow.Cells[1,i+1].Value2.ToString(), row.Cells[1, i + 1].Value2.ToString());
+                    l.Add(d);
                 }
-
-                l.Add(d);
             }
             return l;
         }
 
         private void btn_Run_Click(object sender, RoutedEventArgs e)
         {
-            var fields = GetFieldNames();
+            var fieldNames = GetFieldNames();
             var data = LoadExcel();
-            StringBuilder sb = new StringBuilder();
+
+            int count = 0;
+            string outdir = txt_Output.Text;
+            if (outdir == String.Empty)
+            {
+                outdir = ".";
+            }
+
             foreach (var row in data)
             {
-                foreach (var field in fields)
+                count++;
+                string outpath = outdir + @"\_merged" + count.ToString() + ".pdf";
+                using (FileStream outFile = new FileStream(outpath, FileMode.Create))
                 {
-                    sb.Append(row[field].ToString() + ", ");
+                    PdfReader source = new PdfReader(txt_PDF.Text);
+                    PdfStamper copy = new PdfStamper(source, outFile);
+                    AcroFields fields = copy.AcroFields;
+
+                    foreach (var field in fieldNames)
+                    {
+                        fields.SetField(field, row[field].ToString());
+                    }
+
+                    copy.Close();
+                    source.Close();
                 }
-                sb.Append(Environment.NewLine);
+
             }
-            MessageBox.Show(sb.ToString());
+
+            MessageBox.Show("Merge complete.");
         }
     }
 }
