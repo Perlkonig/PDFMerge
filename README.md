@@ -12,7 +12,7 @@ This app targets the .NET 4.0 architecture. Current Windows users shouldn't need
 
 ### Installing
 
-End users, soon the Releases tab will contain a ClickOnce package you can install.
+End users, go to the [Releases page](https://github.com/Perlkonig/PDFMerge/releases), find the version you want, then download the ``PDFMerge-ClickOnce-Package.zip`` file. Unzip that folder then double-click on ``setup.exe``. 
 
 Developers, just fork the repository and go to town.
 
@@ -24,7 +24,6 @@ In the ``examples`` folder are a sample Excel file and PDF form. Drop those into
 
 * [Visual Studio Community 2017](https://www.visualstudio.com/) - Development environment
 * [iTextSharp](https://github.com/itext/itextsharp) - PDF library
-
 
 ## License
 
